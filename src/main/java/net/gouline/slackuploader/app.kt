@@ -32,6 +32,7 @@ fun main(args: Array<String>) {
 
     val session = SlackSessionFactory.createWebSocketSlackSession("")
     session.connect()
+
 }
 
 private fun start(line: CommandLine) {
