@@ -7,6 +7,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'net.sf.proguard:proguard-gradle:5.3.2'
     }
 }
 
@@ -27,17 +28,25 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'commons-cli:commons-cli:1.3.1'
-    compile 'com.ullink.slack:simpleslackapi:0.6.0'
+    compile 'com.beust:jcommander:1.60'
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
 }
 
 shadowJar {
-    baseName = 'app'
+    baseName = rootProject.name
     classifier = 'shadow'
 
     manifest {
         attributes 'Main-Class': mainClassName
     }
+}
+
+task proguard(type: proguard.gradle.ProGuardTask) {
+    configuration 'proguard.txt'
+
+
+    injars "build/libs/${rootProject.name}-shadow.jar"
+    outjars "build/libs/${rootProject.name}-shadow-minified.jar"
 }
 
 task wrapper(type: Wrapper) {
