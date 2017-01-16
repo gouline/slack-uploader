@@ -41,7 +41,7 @@ shadowJar {
     }
 }
 
-task proguard(type: proguard.gradle.ProGuardTask) {
+task proguard(type: ProGuardTask) {
     configuration 'proguard.txt'
 
 
