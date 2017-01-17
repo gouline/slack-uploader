@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/slack-uploader.iml" filepath="$PROJECT_DIR$/.idea/modules/slack-uploader.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/slack-uploader_main.iml" filepath="$PROJECT_DIR$/.idea/modules/slack-uploader_main.iml" group="slack-uploader" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/slack-uploader_main.iml" filepath="$PROJECT_DIR$/.idea/modules/slack-uploader_main.iml" group="slack-uploader" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/slack-uploader_test.iml" filepath="$PROJECT_DIR$/.idea/modules/slack-uploader_test.iml" group="slack-uploader" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/slack-uploader_test.iml" filepath="$PROJECT_DIR$/.idea/modules/slack-uploader_test.iml" group="slack-uploader" />
     </modules>
   </component>

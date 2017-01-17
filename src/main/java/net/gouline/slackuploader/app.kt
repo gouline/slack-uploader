@@ -3,6 +3,8 @@ package net.gouline.slackuploader
 import com.beust.jcommander.JCommander
 import com.beust.jcommander.Parameter
 import com.beust.jcommander.ParameterException
+import okhttp3.*
+import java.io.File
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -15,20 +17,74 @@ fun main(args: Array<String>) {
     try {
         commander.parse(*args)
     } catch (e: ParameterException) {
-        println("ERROR: ${e.message}")
-        exitProcess(1)
+        error(e.message)
     }
 
     if (cmd.help) {
         commander.usage()
+    } else if (cmd.token == null) {
+        error("No token provided.")
+    } else if (cmd.title == null) {
+        error("No title provided.")
+    } else if (cmd.channels.isEmpty()) {
+        error("No channels provided.")
+    } else if (cmd.files.isEmpty()) {
+        error("No files provided.")
     } else {
-        println("Token: ${cmd.token}")
-        println("Title: ${cmd.title}")
-        println("Channels: ${cmd.channels} (${cmd.channels.size})")
-        println("Files: ${cmd.files} (${cmd.files.size})")
+        val file = File(cmd.files.first())
+        if (!file.exists()) {
+            error("File not found.")
+        } else {
+            SlackClient(cmd.token!!).upload(file, cmd.title!!, cmd.channels)
+        }
     }
 }
 
+/**
+ * Minimal Slack client.
+ */
+class SlackClient(val token: String) {
+
+    companion object {
+        private const val BASE_URL = "https://slack.com/api"
+        private const val FILES_UPLOAD_URL = "$BASE_URL/files.upload"
+    }
+
+    private val client = OkHttpClient()
+
+    /**
+     * Uploads file to channels.
+     */
+    fun upload(file: File, title: String, channels: List<String>) {
+        val response = execute(FILES_UPLOAD_URL, {
+            it.addFormDataPart("title", title)
+                    .addFormDataPart("channels", channels.joinToString(","))
+                    .addFormDataPart("file", file.name, RequestBody.create(null, file))
+        })
+        if (response.isSuccessful) {
+            success(response.body().string())
+        } else {
+            error("Request failed: $response")
+        }
+    }
+
+    private inline fun execute(url: String, f: (MultipartBody.Builder) -> Unit): Response {
+        val body = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("token", token)
+                .apply { f(this) }
+                .build()
+        val request = Request.Builder()
+                .url(url)
+                .post(body)
+                .build()
+        return client.newCall(request).execute()
+    }
+}
+
+/**
+ * CLI input commands.
+ */
 class Commands {
     @Parameter(names = arrayOf("--help", "-h"), description = "Displays this usage.", help = true)
     var help = false
@@ -44,4 +100,20 @@ class Commands {
 
     @field:Parameter(description = "FILE", required = true)
     var files: List<String> = ArrayList()
+}
+
+/**
+ * Prints success message.
+ */
+private fun success(message: String?) {
+    println("SUCCESS: $message")
+    exitProcess(0)
+}
+
+/**
+ * Prints error message and quits.
+ */
+private fun error(message: String?) {
+    println("ERROR: $message")
+    exitProcess(1)
 }

@@ -1,3 +1,5 @@
+import proguard.gradle.ProGuardTask
+
 buildscript {
     ext.kotlin_version = '1.0.6'
 
@@ -43,7 +45,6 @@ shadowJar {
 
 task proguard(type: ProGuardTask) {
     configuration 'proguard.txt'
-
 
     injars "build/libs/${rootProject.name}-shadow.jar"
     outjars "build/libs/${rootProject.name}-shadow-minified.jar"
