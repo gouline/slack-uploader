@@ -10,11 +10,8 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-# gradle/wrapper/gradle-wrapper.properties
-
 # IntelliJ
-*.iml
-.idea/workspace.xml
-.idea/dictionaries
-.idea/libraries
+.idea/
+
+# ProGuard
+proguard.map
